@@ -14,7 +14,7 @@ export default function Page() {
     })
     console.log(formDetails)
   }
-
+# just pull to local
   const validateForm = () =>{
     if(formDetails.email==="" || formDetails.email.length<=8){
       if(formDetails.password.length>8){
