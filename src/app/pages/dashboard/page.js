@@ -1,8 +1,20 @@
+"use client"
 import "../dashboard/dashboard.css"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 export default function Page() {
-    
+
+    const [userDetails, setUserDetails] = useState({})
+
+    useEffect(()=>{
+        console.log('effect triggered')
+        const fetchData = async () => {
+            const response = await fetch("/dashboard/api/index")
+            console.log(response)
+        }
+        fetchData()
+    })
+
   return (
     <div className="">
         <nav className='nav-bar'>
