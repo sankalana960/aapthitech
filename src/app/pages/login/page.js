@@ -2,17 +2,24 @@
 import "../login/login.css"
 import React, { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import bcrypt from 'bcryptjs';
 
 export default function Page() {
 
   const [formDetails, setForm] = useState({email:'', password:""})
-
   const [formErrors, setFormError] = useState({email:false, password:false})
+
+  const hashPassword = async (password) => {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+  };
+
+
   const fromChanger = (e)=>{
     setForm((prev)=>{
         return {...prev, [e.target.id]:e.target.value}
     })
-    console.log(formDetails)
   }
 
   const validateForm = () =>{
@@ -25,12 +32,20 @@ export default function Page() {
       setFormError(pre=>{ return {...pre, password:true} })
     }else{
       setFormError(pre=>{ return {email:false, password:false} })
-      router.push('http://localhost:3000/pages/dashboard')
     }
   }
 
-  const login = () =>{
+  const login  = async () =>{
     validateForm()
+    const email = formDetails.email
+    const password = await hashPassword(formDetails.password)
+    const responce = await fetch("http://localhost:8333/loginuser", {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+      },
+      body:JSON.stringify({email, password})
+    })
   }
 
   return (

@@ -4,16 +4,17 @@ import React, { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 export default function Page() {
 
-    const [userDetails, setUserDetails] = useState({})
+    const [userDetails, setUserDetails] = useState([])
 
     useEffect(()=>{
         console.log('effect triggered')
         const fetchData = async () => {
-            const response = await fetch("/dashboard/api/index")
-            console.log(response)
+            const response = await fetch("http://localhost:8333/getusers")
+            const data = await response.json()
+            setUserDetails(data)
         }
         fetchData()
-    })
+    }, [])
 
   return (
     <div className="">
@@ -34,24 +35,17 @@ export default function Page() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>sankalana</td>
-                        <td>chary</td>
-                        <td>sankalana3@gmail.com</td>
-                        <td>8333881112</td>
-                    </tr>
-                    <tr>
-                        <td>sankalana</td>
-                        <td>chary</td>
-                        <td>sankalana3@gmail.com</td>
-                        <td>8333881112</td>
-                    </tr>
-                    <tr>
-                        <td>sankalana</td>
-                        <td>chary</td>
-                        <td>sankalana3@gmail.com</td>
-                        <td>8333881112</td>
-                    </tr>
+                    {userDetails.map((each)=>{
+                        const {first_name, last_name, email, phone_number} = each
+                        return(
+                            <tr key={phone_number}>
+                                <td>{first_name}</td>
+                                <td>{last_name}</td>
+                                <td>{email}</td>
+                                <td>{phone_number}</td>
+                            </tr>
+                        )
+                    })}
                 </tbody>
             </table>
         </div>
