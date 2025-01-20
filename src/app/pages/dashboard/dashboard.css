@@ -1,0 +1,29 @@
+
+.nav-bar{
+    background-color: rgba(75, 70, 70, 0.774);
+    width: 100vw;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+
+.nav-menu{
+    margin-right: 30px;
+    margin-left: 20px;
+}
+
+.containers{
+    padding: 30px;
+    width: 100vw;
+}
+
+.user-text{
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+    font-size: 40px;
+    font-weight: bold;
+    padding-bottom: 7px;
+}
+
+
