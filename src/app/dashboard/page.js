@@ -6,12 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from "next/navigation";
 export default function Page() {
     const router = useRouter()
-    useEffect(() => {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if (!isLoggedIn) {
-            router.push('/login');
-        }
-    });
+
     const [userDetails, setUserDetails] = useState([])
     const role = localStorage.getItem('userRole');
     const fetchData = async () => {
@@ -20,7 +15,10 @@ export default function Page() {
         setUserDetails(data)
     }
     useEffect(()=>{
-        console.log('effect triggered')
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (!isLoggedIn) {
+            router.push('/login');
+        }
         fetchData()
     }, [])
 

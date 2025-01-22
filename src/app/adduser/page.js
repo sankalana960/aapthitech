@@ -11,6 +11,7 @@ export default function Page() {
   const [formDetails, setForm] = useState({firstName:"", lastName:"", email:"", gender:"Male", password:"", hobbies:"", role:"", number:""})
   const [formErrors, setFormErrors] = useState({});
   const [profile, setImage] = useState(null)
+  const [preview, setPreviewImage] = useState(null)
   const searchParams = useSearchParams();
 
   const [update, setUpdate] = useState(true)
@@ -21,6 +22,8 @@ export default function Page() {
         const response = await fetch(`http://localhost:8333/getusers/${id}`)
         const data = await response.json()
         setForm(data)
+        const dp = await fetch(`http://localhost:8333/uploads/${formDetails.imagePath}`)
+        setImage(data.imagePath)
         setUpdate(false)
       })()
     }
@@ -69,19 +72,49 @@ export default function Page() {
     const response = await data.json()
     router.push('/dashboard')
   }
-  const UpdateForm = async (e) =>{
+  // const UpdateForm = async (e) =>{
+  //   e.preventDefault();
+  //   console.log(formDetails)
+  //   const data = await fetch(`http://localhost:8333/updateuser/${id}`, {
+  //       method:'PUT',
+  //       headers:{
+  //         'Content-Type':"Application/json"
+  //       },
+  //       body:JSON.stringify(formDetails)
+  //   })
+  //   const response = await data.json()
+  //   router.push('/dashboard')
+  // }
+  const UpdateForm = async (e) => {
     e.preventDefault();
-    console.log(formDetails)
-    const data = await fetch(`http://localhost:8333/updateuser/${id}`, {
-        method:'PUT',
-        headers:{
-          'Content-Type':"Application/json"
-        },
-        body:JSON.stringify(formDetails)
-    })
-    const response = await data.json()
-    router.push('/dashboard')
-  }
+
+    const formData = new FormData();
+    for (const key in formDetails) {
+        formData.append(key, formDetails[key]);
+    }
+    if (profile) {
+        formData.append('image', profile);
+    }
+    try {
+        const response = await fetch(`http://localhost:8333/updateuser/${id}`, {
+            method: 'PUT',
+            body: formData,
+        });
+        if (!response.ok) {
+            const error = await response.json();
+            console.error("Error updating user:", error.error);
+            return;
+        }
+
+        const result = await response.json();
+        console.log(result.message);
+        router.push('/dashboard');
+    } catch (error) {
+        console.error("Request failed:", error);
+    }
+};
+
+
 
   const handleLogout = () => {
     localStorage.clear();
@@ -91,6 +124,13 @@ const handleImageChange = (event) => {
   const file = event.target.files[0];
   if (file) {
     setImage(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+        setPreviewImage(reader.result); // Set the preview image URL
+    };
+    reader.readAsDataURL(file);
+  }else{
+    setPreviewImage(null);
   }
 };
 
@@ -107,6 +147,8 @@ const handleImageChange = (event) => {
       <div className='container pt-3'>
       <form>
       <input onChange={handleImageChange} type="file" accept="image/*" />
+      {preview&&<img src={preview} alt="NA" style={{ width: '80px', height: 'auto' }}/>}
+      {!preview&&<img src={`http://localhost:8333/uploads/${formDetails.imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/>}
         <div className="form-row">
           <div className="col-md-4 mb-3">
             <label htmlFor="firstName">First name</label>
