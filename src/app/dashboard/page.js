@@ -44,7 +44,7 @@ export default function Page() {
         localStorage.clear();
         router.push('/login');
     };
-
+    console.log(userDetails)
 
 
   return (
@@ -62,6 +62,7 @@ export default function Page() {
             <table className="table">
                 <thead>
                     <tr>
+                        <th scope="col">Profile</th>
                         <th scope="col">First Name</th>
                         <th scope="col">Last Name</th>
                         <th scope="col">Email</th>
@@ -72,9 +73,11 @@ export default function Page() {
                 </thead>
                 <tbody>
                     {userDetails.map((each)=>{
-                        const {id,first_name, last_name, email, phone_number, admin} = each
+                        let {id,first_name, last_name, email, phone_number,imagePath,  admin} = each
+                        imagePath= imagePath.replace(/C:\\uploads\\/g,"")
                         return(
                             <tr key={id}>
+                                <td><img src={`http://localhost:8333/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
                                 <td>{first_name}</td>
                                 <td>{last_name}</td>
                                 <td>{email}</td>

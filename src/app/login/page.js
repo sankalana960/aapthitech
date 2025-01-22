@@ -39,7 +39,7 @@ export default function Page() {
   const login  = async () =>{
     validateForm()
     const email = formDetails.email
-    const password = formDetails.password//await hashPassword(formDetails.password);
+    const password = formDetails.password
     
     const responce = await fetch("http://localhost:8333/loginuser", {
       method:"POST",

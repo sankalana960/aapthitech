@@ -9,7 +9,10 @@ import { useSearchParams } from "next/navigation";
 export default function Page() {
 
   const [formDetails, setForm] = useState({firstName:"", lastName:"", email:"", gender:"Male", password:"", hobbies:"", role:"", number:""})
+  const [formErrors, setFormErrors] = useState({});
+  const [profile, setImage] = useState(null)
   const searchParams = useSearchParams();
+
   const [update, setUpdate] = useState(true)
   const id = searchParams.get("id")
   useEffect(()=>{
@@ -17,7 +20,6 @@ export default function Page() {
       (async ()=>{
         const response = await fetch(`http://localhost:8333/getusers/${id}`)
         const data = await response.json()
-        console.log(data)
         setForm(data)
         setUpdate(false)
       })()
@@ -38,17 +40,31 @@ export default function Page() {
   }
   const router = useRouter()
   const validation = () =>{
-    
+    // const errors = {};
+    //     if (!formData.first_name) errors.first_name = "First name is required";
+    //     if (!formData.last_name) errors.last_name = "Last name is required";
+    //     if (!formData.email) {
+    //         errors.email = "Email is required";
+    //     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    //         errors.email = "Email is not valid";
+    //     }
+    //     if (!formData.phone_number) errors.phone_number = "Phone number is required";
+    //     if (!formData.password) errors.password = "Password is required";
+    //     else if (formData.password.length < 6) errors.password = "Password must be at least 6 characters long";
   }
   const submitForm = async (e) =>{
     e.preventDefault();
-    console.log(formDetails)
+    validation();
+    const formData = new FormData();
+    for (const key in formDetails) {
+      formData.append(key, formDetails[key]);
+    }
+    if (profile) {
+      formData.append('image', profile);
+    }
     const data = await fetch("http://localhost:8333/userdetails", {
         method:'POST',
-        headers:{
-          'Content-Type':"Application/json"
-        },
-        body:JSON.stringify(formDetails)
+        body:formData
     })
     const response = await data.json()
     router.push('/dashboard')
@@ -71,7 +87,12 @@ export default function Page() {
     localStorage.clear();
     router.push('/login');
 };
-
+const handleImageChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    setImage(file);
+  }
+};
 
 
   return (
@@ -85,6 +106,7 @@ export default function Page() {
       </nav>
       <div className='container pt-3'>
       <form>
+      <input onChange={handleImageChange} type="file" accept="image/*" />
         <div className="form-row">
           <div className="col-md-4 mb-3">
             <label htmlFor="firstName">First name</label>
