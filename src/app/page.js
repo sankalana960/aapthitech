@@ -1,4 +1,3 @@
-import Image from "next/image";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css'; 
 import Link from "next/link";
@@ -100,10 +99,9 @@ export default function Home() {
     //     </a>
     //   </footer>
     // </div>
-
-    <div className="container">
+    <div className="containers">
         <div className="form">
-          <Link href={'pages/login'}><button className="btn btn-primary">Login</button></Link>
+          <Link href={'/login'}><button className="btn btn-primary">Login</button></Link>
         </div>
     </div>
   );

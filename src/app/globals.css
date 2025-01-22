@@ -22,8 +22,7 @@ body {
 } 
 
 
-.container{
-  width: 100px;
+.containers{
   height: 400px;
   color: white;
   text-align: center;

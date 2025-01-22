@@ -1,0 +1,15 @@
+
+.nav-bar{
+    background-color: rgba(75, 70, 70, 0.774);
+    width: 100vw;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+
+.nav-menu{
+    padding-top: 10px;
+    margin-right: 30px;
+    margin-left: 20px;
+}

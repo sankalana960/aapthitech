@@ -3,9 +3,10 @@ import "../login/login.css"
 import React, { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import bcrypt from 'bcryptjs';
+import { useRouter } from "next/navigation";
 
 export default function Page() {
-
+  const router = useRouter();
   const [formDetails, setForm] = useState({email:'', password:""})
   const [formErrors, setFormError] = useState({email:false, password:false})
 
@@ -21,7 +22,7 @@ export default function Page() {
         return {...prev, [e.target.id]:e.target.value}
     })
   }
-# just pull to local
+  
   const validateForm = () =>{
     if(formDetails.email==="" || formDetails.email.length<=8){
       if(formDetails.password.length>8){
@@ -38,7 +39,8 @@ export default function Page() {
   const login  = async () =>{
     validateForm()
     const email = formDetails.email
-    const password = await hashPassword(formDetails.password)
+    const password = formDetails.password//await hashPassword(formDetails.password);
+    
     const responce = await fetch("http://localhost:8333/loginuser", {
       method:"POST",
       headers:{
@@ -46,10 +48,16 @@ export default function Page() {
       },
       body:JSON.stringify({email, password})
     })
-  }
-
+    const data = await responce.json()
+    console.log(data)
+    if (data.valid) {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userRole', data.role);      
+      router.push("/dashboard");
+      }
+    }
   return (
-    <div className='container'>
+    <div className='containers'>
       <div className="login-form">
         <h4 className="text">Sign in to your session</h4>
           <input id="email" onChange={fromChanger} value={formDetails.email} className="form-control input-feild" type="text" placeholder="Email"/>
