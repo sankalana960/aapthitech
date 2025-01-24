@@ -28,13 +28,6 @@ export default function Page() {
       })()
     }
   },[])
-  useEffect(() => {
-          const isLoggedIn = localStorage.getItem('isLoggedIn');
-          if (!isLoggedIn) {
-              router.push('/login');
-          }
-      });
-
   const formHandler = (e) => {
     const { id, value } = e.target;
     setForm((prev) => {
@@ -43,21 +36,27 @@ export default function Page() {
   }
   const router = useRouter()
   const validation = () =>{
-    // const errors = {};
-    //     if (!formData.first_name) errors.first_name = "First name is required";
-    //     if (!formData.last_name) errors.last_name = "Last name is required";
-    //     if (!formData.email) {
-    //         errors.email = "Email is required";
-    //     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    //         errors.email = "Email is not valid";
-    //     }
-    //     if (!formData.phone_number) errors.phone_number = "Phone number is required";
-    //     if (!formData.password) errors.password = "Password is required";
-    //     else if (formData.password.length < 6) errors.password = "Password must be at least 6 characters long";
+    if(formDetails.firstName===""){
+      alert('enter First name')
+      return 1
+    }else if (formDetails.email===""){
+      alert('enter Email')
+      return 1
+    }else if (formDetails.number===""){
+      alert('enter Mobile Number')
+      return 1
+    }else if (formDetails.password===""){
+      alert('Set a Password to User')
+      return 1
+    }
   }
   const submitForm = async (e) =>{
     e.preventDefault();
     validation();
+    if(!profile){
+      alert("Upload Image")
+      return
+    }
     const formData = new FormData();
     for (const key in formDetails) {
       formData.append(key, formDetails[key]);
@@ -87,7 +86,10 @@ export default function Page() {
   // }
   const UpdateForm = async (e) => {
     e.preventDefault();
-
+    const valid = validation()
+    if (valid){
+      return
+    }
     const formData = new FormData();
     for (const key in formDetails) {
         formData.append(key, formDetails[key]);
@@ -138,8 +140,7 @@ const handleImageChange = (event) => {
   return (
     <>
       <nav className='nav-bar'>
-        <p className="nav-menu">Home</p>
-        <Link href="dashboard"><p className="nav-menu">User</p></Link>
+        <Link href="dashboard"><button className="btn nav-menu">Home</button></Link>
         <button onClick={handleLogout} className="btn btn-danger">
             Logout
         </button>
@@ -148,7 +149,7 @@ const handleImageChange = (event) => {
       <form>
       <input onChange={handleImageChange} type="file" accept="image/*" />
       {preview&&<img src={preview} alt="NA" style={{ width: '80px', height: 'auto' }}/>}
-      {!preview&&<img src={`http://localhost:8333/uploads/${formDetails.imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/>}
+      {formDetails.imagePath&&!preview&&<img src={`http://localhost:8333/uploads/${formDetails.imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/>}
         <div className="form-row">
           <div className="col-md-4 mb-3">
             <label htmlFor="firstName">First name</label>

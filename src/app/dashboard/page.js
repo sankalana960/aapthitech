@@ -4,21 +4,21 @@ import React, {useEffect, useLayoutEffect, useState } from 'react'
 import Link from "next/link";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 export default function Page() {
     const router = useRouter()
 
     const [userDetails, setUserDetails] = useState([])
-    const role = localStorage.getItem('userRole');
+    const userRole = localStorage.getItem('userRole');
+    const userFirst = localStorage.getItem('firstName');
+    const userimage = localStorage.getItem('imagePath');
+    const userID = localStorage.getItem('id');
     const fetchData = async () => {
         const response = await fetch("http://localhost:8333/getusers")
         const data = await response.json()
         setUserDetails(data)
     }
     useEffect(()=>{
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if (!isLoggedIn) {
-            router.push('/login');
-        }
         fetchData()
     }, [])
 
@@ -40,23 +40,36 @@ export default function Page() {
     }
     const handleLogout = () => {
         localStorage.clear();
+        Cookies.remove("isLoggedIn");
         router.push('/login');
     };
-    console.log(userDetails)
 
 
   return (
     <div className="">
         <nav className='nav-bar'>
-            <p className="nav-menu">Home</p>
-            <p className="nav-menu">User</p>
-            <button onClick={handleLogout} className="btn btn-danger">
+        <button className="btn nav-menu">Home</button>
+        <button onClick={handleLogout} className="btn btn-danger">
             Logout
-            </button>
+        </button>
+        <div className="profile-container" style={{ display: 'flex', alignItems: 'center', marginLeft: '900px' }}>
+            <img
+            src={`http://localhost:8333/uploads/${userimage}`}
+            alt="User Profile"
+            style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                marginRight: '2px',
+            }}
+            />
+            <p className="mt-2 ml-3">{userFirst}</p>
+        </div>
         </nav>
+
         <div className="container" style={{padding: "30px", width: "100vw"}}>
             <h2 className="user-text">Users</h2>
-            <Link href="adduser"><button className="btn btn-success">Add User</button></Link>
+            {userRole==="Admin"&&<Link href="adduser"><button className="btn btn-success">Add User</button></Link>}
             <table className="table">
                 <thead>
                     <tr>
@@ -65,27 +78,45 @@ export default function Page() {
                         <th scope="col">Last Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Mobile Number</th>
+                        <th scope="col">Role</th>
                         <th scope="col"></th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {userDetails.map((each)=>{
-                        let {id,first_name, last_name, email, phone_number,imagePath,  admin} = each
+                        let {id,first_name, last_name, email, phone_number,imagePath, role} = each
                         imagePath= imagePath.replace(/C:\\uploads\\/g,"")
-                        return(
-                            <tr key={id}>
-                                <td><img src={`http://localhost:8333/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
-                                <td>{first_name}</td>
-                                <td>{last_name}</td>
-                                <td>{email}</td>
-                                <td>{phone_number}</td>
-                                {role==="Admin"&&<>
+                        if(userRole==="Admin" && id!=userID)
+                        {
+                            return(
+                                <tr key={id}>
+                                    <td><img src={`http://localhost:8333/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
+                                    <td>{first_name}</td>
+                                    <td>{last_name}</td>
+                                    <td>{email}</td>
+                                    <td>{phone_number}</td>
+                                    <td>{role}</td>
                                     <td><button onClick={()=>editUser(each)} className="btn btn-primary">Edit</button></td>
                                     <td><button onClick={()=>deleteUser(each)} className="btn btn-secondary">delete</button></td>
-                                </>}
-                            </tr>
-                        )
+                                </tr>
+                            )
+                        }else{
+                            if(role==="User" && id!=userID){
+                                return(
+                                    <tr key={id}>
+                                        <td><img src={`http://localhost:8333/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
+                                        <td>{first_name}</td>
+                                        <td>{last_name}</td>
+                                        <td>{email}</td>
+                                        <td>{phone_number}</td>
+                                        <td>{role}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                )
+                            }
+                        }
                     })}
                 </tbody>
             </table>

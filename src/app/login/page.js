@@ -49,11 +49,16 @@ export default function Page() {
       body:JSON.stringify({email, password})
     })
     const data = await responce.json()
-    console.log(data)
     if (data.valid) {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userRole', data.role);      
+      localStorage.setItem('userRole', data.user.role);
+      localStorage.setItem('firstName', data.user.first_name);
+      localStorage.setItem('imagePath', data.user.imagePath);
+      localStorage.setItem('id', data.user.id);
+      document.cookie = `isLoggedIn=true; path=/; SameSite=Strict; Secure`;
+      // document.cookie = `userRole=${data.role}; path=/; SameSite=Strict; Secure`;      
       router.push("/dashboard");
+      }else{
+        alert("Enter Valid Credentials")
       }
     }
   return (
