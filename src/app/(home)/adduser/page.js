@@ -53,16 +53,15 @@ export default function Page() {
     }else if (formDetails.password===""){
       alert('Set a Password to User')
       return 1
+    }else if (!profile){
+      alert("Upload Image")
+      return 1
     }
   }
 
   const submitForm = async (e) =>{
     e.preventDefault();
     validation();
-    if(!profile){
-      alert("Upload Image")
-      return
-    }
     const formData = new FormData();
     for (const key in formDetails) {
       formData.append(key, formDetails[key]);
@@ -145,7 +144,7 @@ export default function Page() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className='container d-flex justify-content-center align-items-center' >
-        <form className='col-8 pt-5'>
+        <form className='col-8'>
           <div className="form-row">
             <div className="pt-5 col-md-7 mb-3">
               <label htmlFor="firstName">First name</label>

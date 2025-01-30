@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import { useRouter } from "next/navigation";
 import { API_ROUTES, getEndpointUrl } from "../../constants/apiroutes";
 import { PAGE_ROUTE } from "../../constants/pagesroutes";
-
+import {Alert} from "../../components/alert";
 export default function Page() {
   const router = useRouter();
   const [formDetails, setForm] = useState({email:'', password:""})
@@ -60,18 +60,24 @@ export default function Page() {
       // document.cookie = `userRole=${data.role}; path=/; SameSite=Strict; Secure`;      
       router.push(PAGE_ROUTE.DASHBOARD);
       }else{
-        alert("Enter Valid Credentials")
+        setAlert(true)
+        setTimeout(()=>{
+          setAlert(false)
+        },2000)
       }
     }
+    const [alert, setAlert]=useState(false)
   return (
     <div className='containers'>
       <div className="login-form">
+
         <h4 className="text">Sign in to your session</h4>
           <input id="email" onChange={fromChanger} value={formDetails.email} className="form-control input-feild" type="text" placeholder="Email"/>
           {formErrors.email&&<p className="error">Enter valid Email</p>}
           <input id="password" onChange={fromChanger} value={formDetails.password} className="form-control input-feild" type="text" placeholder="Password"/>
           {formErrors.password&&<p className="error">Enter valid Password</p>}
-          <button onClick={login} className="btn btn-primary">Login</button>
+          <button onClick={login} className="btn btn-primary mb-4">Login</button>
+          <Alert status={alert} text1="INVALID USER" text2=", Try Valid Credentials....!!!" top="40px" right="20px" />
       </div>
     </div>
   )
