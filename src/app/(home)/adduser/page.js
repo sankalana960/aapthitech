@@ -147,7 +147,7 @@ export default function Page() {
       <div className='container d-flex justify-content-center align-items-center' >
         <form className='col-8 pt-5'>
           <div className="form-row">
-            <div className="col-md-7 mb-3">
+            <div className="pt-5 col-md-7 mb-3">
               <label htmlFor="firstName">First name</label>
               <input onChange={formHandler} value={formDetails.firstName} type="text" className="form-control" id="firstName" placeholder="First name" required />
             </div>
