@@ -4,8 +4,8 @@ import React, { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import bcrypt from 'bcryptjs';
 import { useRouter } from "next/navigation";
-import { API_ROUTES } from "@/constants/apiroutes";
-import { PAGE_ROUTE } from "@/constants/pagesroutes";
+import { API_ROUTES, getEndpointUrl } from "../../constants/apiroutes";
+import { PAGE_ROUTE } from "../../constants/pagesroutes";
 
 export default function Page() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function Page() {
     const email = formDetails.email
     const password = formDetails.password
     const API_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
-    const responce = await fetch(`${API_URL}/${API_ROUTES.AUTH.LOGIN}`, {
+    const responce = await fetch(getEndpointUrl(API_ROUTES.AUTH.LOGIN), {
       method:"POST",
       headers:{
         "Content-Type":"application/json",

@@ -5,17 +5,19 @@ import Link from "next/link";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { API_ROUTES } from "@/constants/apiroutes";
+// import { API_ROUTES } from "../constants/apiroutes";
+import { API_ROUTES, getEndpointUrl } from "../../../constants/apiroutes";
 export default function Page() {
     const router = useRouter()
-    const API_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
     const [userDetails, setUserDetails] = useState([])
     const userRole = localStorage.getItem('userRole');
     const userFirst = localStorage.getItem('firstName');
     const userimage = localStorage.getItem('imagePath');
     const userID = localStorage.getItem('id');
+    
     const fetchData = async () => {
-        const response = await fetch(`${API_URL}/${API_ROUTES.GETALLUSERS.GETALLUSERS}`)
+        // const response = await fetch(`${API_URL}/${API_ROUTES.GETALLUSERS.GETALLUSERS}`)
+        const response = await fetch(getEndpointUrl(API_ROUTES.GETALLUSERS.GETALLUSERS))
         const data = await response.json()
         setUserDetails(data)
     }
@@ -34,7 +36,8 @@ export default function Page() {
             return;
         }
         const {id} = user;
-        const response = await fetch(`${API_URL}/${API_ROUTES.USER.DELETEUSER}/${id}`, {
+        const response = await fetch(`${getEndpointUrl(API_ROUTES.USER.DELETEUSER)}/${id}`, {
+            // const response = await fetch(`${API_URL}/${API_ROUTES.USER.DELETEUSER}/${id}`, {
             method: 'DELETE',
         });
         fetchData();
@@ -48,29 +51,15 @@ export default function Page() {
 
   return (
     <div className="">
-        <nav className='nav-bar'>
-        <button className="btn nav-menu">Home</button>
-        <button onClick={handleLogout} className="btn btn-danger">
-            Logout
-        </button>
-        <div className="profile-container" style={{ display: 'flex', alignItems: 'center', marginLeft: '900px' }}>
-            <img
-            src={`${API_URL}/public/uploads/${userimage}`}
-            alt="User Profile"
-            style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                marginRight: '2px',
-            }}
-            />
-            <p className="mt-2 ml-3">{userFirst}</p>
-        </div>
-        </nav>
-
         <div className="container" style={{padding: "30px", width: "100vw"}}>
+        <div className="d-flex justify-content-between mb-3">
             <h2 className="user-text">Users</h2>
-            {userRole==="Admin"&&<Link href="adduser"><button className="btn btn-success">Add User</button></Link>}
+            {userRole==="Admin"&&
+                <Link href="adduser">
+                    <button className="btn btn-success">Add User</button>
+                </Link>
+            }
+        </div>
             <table className="table">
                 <thead>
                     <tr>
@@ -97,8 +86,8 @@ export default function Page() {
                         if(userRole==="Admin" && id!=userID)
                         {
                             return(
-                                <tr key={id}>
-                                    <td><img src={`${API_URL}/public/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
+                                <tr key={id} className="user-row">
+                                    <td><img src={`${getEndpointUrl(API_ROUTES.STATICFILES)}${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
                                     <td>{first_name}</td>
                                     <td>{last_name}</td>
                                     <td>{email}</td>
@@ -111,8 +100,8 @@ export default function Page() {
                         }else{
                             if(role==="User" && id!=userID){
                                 return(
-                                    <tr key={id}>
-                                        <td><img src={`${API_URL}/public/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
+                                    <tr key={id} className="user-row" >
+                                        <td><img src={`${getEndpointUrl(API_ROUTES.STATICFILES)}${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
                                         <td>{first_name}</td>
                                         <td>{last_name}</td>
                                         <td>{email}</td>

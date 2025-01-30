@@ -2,14 +2,13 @@
 import React, { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "../adduser/adduser.css"
+import "./adduser.css"
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from "next/navigation";
-import { API_ROUTES } from '@/constants/apiroutes';
-import { PAGE_ROUTE } from '@/constants/pagesroutes';
+import { API_ROUTES, getEndpointUrl } from '../../../constants/apiroutes';
+import { PAGE_ROUTE } from '../../../constants/pagesroutes';
 
 export default function Page() {
-  const API_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
   const [formDetails, setForm] = useState({firstName:"", lastName:"", email:"", gender:"Male", password:"", hobbies:"", role:"", number:""})
   const [formErrors, setFormErrors] = useState({});
   const [profile, setImage] = useState(null)
@@ -18,19 +17,19 @@ export default function Page() {
   
   const [update, setUpdate] = useState(true)
   const id = searchParams.get("id")
-  
+  if (id){
   useEffect(()=>{
-    if (id){
       (async ()=>{
-        const response = await fetch(`${API_URL}/${API_ROUTES.USER.GETUSER}/${id}`)
+        // const response = await fetch(`${API_URL}/${API_ROUTES.USER.GETUSER}/${id}`)
+        const response = await fetch(`${getEndpointUrl(API_ROUTES.USER.GETUSER)}/${id}`)
         const data = await response.json()
         setForm(data)
-        const dp = await fetch(`${API_URL}/public/uploads/${formDetails.imagePath}`)
+        const dp = await fetch(`${getEndpointUrl(API_ROUTES.STATICFILES)}${formDetails.imagePath}`)
         setImage(data.imagePath)
         setUpdate(false)
       })()
+    },[])
     }
-  },[])
   
   const formHandler = (e) => {
     const { id, value } = e.target;
@@ -71,7 +70,8 @@ export default function Page() {
     if (profile) {
       formData.append('image', profile);
     }
-    const data = await fetch(`${API_URL}/${API_ROUTES.USER.ADDUSER}`, {
+    const data = await fetch(getEndpointUrl(API_ROUTES.USER.ADDUSER), {
+      // const data = await fetch(`${API_URL}/${API_ROUTES.USER.ADDUSER}`, {
         method:'POST',
         body:formData
     })
@@ -105,7 +105,8 @@ export default function Page() {
         formData.append('image', profile);
     }
     try {
-        const response = await fetch(`${API_URL}/${API_ROUTES.USER.UPDATEUSER}/${id}`, {
+        // const response = await fetch(`${API_URL}/${API_ROUTES.USER.UPDATEUSER}/${id}`, {
+          const response = await fetch(`${getEndpointUrl(API_ROUTES.USER.UPDATEUSER)}/${id}`, {
             method: 'PUT',
             body: formData,
         });
@@ -143,28 +144,18 @@ export default function Page() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <nav className='nav-bar'>
-        <Link href="dashboard"><button className="btn nav-menu">Home</button></Link>
-        <button onClick={handleLogout} className="btn btn-danger">
-            Logout
-        </button>
-      </nav>
-      <div className='container pt-3'>
-        <form>
-          <input onChange={handleImageChange} type="file" accept="image/*" />
-          {preview && <img src={preview} alt="NA" style={{ width: '80px', height: 'auto' }} />}
-          {formDetails.imagePath && !preview && <img src={`${API_URL}/public/uploads/${formDetails.imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }} />}
-          
+      <div className='container d-flex justify-content-center align-items-center' >
+        <form className='col-8 pt-5'>
           <div className="form-row">
-            <div className="col-md-4 mb-3">
+            <div className="col-md-7 mb-3">
               <label htmlFor="firstName">First name</label>
               <input onChange={formHandler} value={formDetails.firstName} type="text" className="form-control" id="firstName" placeholder="First name" required />
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-7 mb-3">
               <label htmlFor="lastName">Last name</label>
               <input onChange={formHandler} value={formDetails.lastName} type="text" className="form-control" id="lastName" placeholder="Last name" required />
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-7 mb-3">
               <label htmlFor="email">Email</label>
               <div className="input-group">
                 <div className="input-group-prepend">
@@ -173,13 +164,13 @@ export default function Page() {
                 <input onChange={formHandler} value={formDetails.email} type="text" className="form-control" id="email" placeholder="Email" aria-describedby="inputGroupPrepend2" required />
               </div>
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-7 mb-3">
               <label htmlFor="email">Number</label>
               <div className="input-group">
                 <input onChange={formHandler} value={formDetails.number} type="text" className="form-control" id="number" placeholder="Mobile number" aria-describedby="inputGroupPrepend2" required />
               </div>
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-7 mb-3">
               <label htmlFor="role">Role</label>
               <select onChange={formHandler} value={formDetails.role} className="form-control" id="role" required>
                 <option value="">Select Role</option>
@@ -189,7 +180,7 @@ export default function Page() {
             </div>
           </div>
           <div className="form-row">
-            <div className="col-md-4 mb-3">
+            <div className="col-md-7 mb-3">
               <label htmlFor="gender">Gender</label>
               <select onChange={formHandler} value={formDetails.gender} className="form-control" id="gender" required>
                 <option value="">Select Gender</option>
@@ -212,6 +203,11 @@ export default function Page() {
             <button onClick={UpdateForm} className="btn btn-primary" type="Update">Update</button>
           )}
         </form>
+        <div className=''>
+          {preview && <img src={preview} alt="NA" style={{ width: '150px', height: 'auto' }} />}
+          {formDetails.imagePath && !preview && <img src={`${getEndpointUrl(API_ROUTES.STATICFILES)}${formDetails.imagePath}`} alt="NA" style={{ width: '150px', height: 'auto' }} />}
+          <input className="pt-4 custom-file-input" onChange={handleImageChange} type="file" accept="image/*" />
+        </div>
       </div>
     </Suspense>
   )

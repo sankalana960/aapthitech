@@ -15,7 +15,7 @@ export default async function middleware(req){
     }
 
     if (isPublic&&isLoggedIn){
-        return NextResponse.redirect(`${origin}/dashboard`)
+        return NextResponse.redirect(`${origin}/home/dashboard`)
     }
 
     return NextResponse.next()

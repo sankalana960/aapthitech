@@ -1,5 +1,5 @@
 
 
 export const PAGE_ROUTE = {
-    DASHBOARD:"/dashboard"
+    DASHBOARD:"dashboard"
 }

@@ -1,4 +1,10 @@
 
+const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
+ 
+// export const ENDPOINTS = {
+//     register: "/auth/register",
+//     getAllUsers: "dashboard/getusers"
+//   };
 
 export const API_ROUTES = {
     AUTH:{
@@ -15,6 +21,11 @@ export const API_ROUTES = {
     GETALLUSERS:{
         BASE:"",
         GETALLUSERS:"getusers"
-    }
+    },
+    STATICFILES:"public/uploads/"
 }
+
+export const getEndpointUrl = (endpoint: string): string => {
+    return `${baseUrl}${endpoint}`;
+  };
 
