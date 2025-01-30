@@ -5,6 +5,7 @@ import Link from "next/link";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { API_ROUTES } from "@/constants/apiroutes";
 export default function Page() {
     const router = useRouter()
     const API_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
@@ -14,7 +15,7 @@ export default function Page() {
     const userimage = localStorage.getItem('imagePath');
     const userID = localStorage.getItem('id');
     const fetchData = async () => {
-        const response = await fetch(`${API_URL}/getusers`)
+        const response = await fetch(`${API_URL}/${API_ROUTES.GETALLUSERS.GETALLUSERS}`)
         const data = await response.json()
         setUserDetails(data)
     }
@@ -33,7 +34,7 @@ export default function Page() {
             return;
         }
         const {id} = user;
-        const response = await fetch(`${API_URL}/deleteuser/${id}`, {
+        const response = await fetch(`${API_URL}/${API_ROUTES.USER.DELETEUSER}/${id}`, {
             method: 'DELETE',
         });
         fetchData();
@@ -111,7 +112,7 @@ export default function Page() {
                             if(role==="User" && id!=userID){
                                 return(
                                     <tr key={id}>
-                                        <td><img src={`${API_URL}/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
+                                        <td><img src={`${API_URL}/public/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
                                         <td>{first_name}</td>
                                         <td>{last_name}</td>
                                         <td>{email}</td>

@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "../adduser/adduser.css"
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from "next/navigation";
+import { API_ROUTES } from '@/constants/apiroutes';
+import { PAGE_ROUTE } from '@/constants/pagesroutes';
 
 export default function Page() {
   const API_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
@@ -19,7 +21,7 @@ export default function Page() {
   useEffect(()=>{
     if (id){
       (async ()=>{
-        const response = await fetch(`${API_URL}/getusers/${id}`)
+        const response = await fetch(`${API_URL}/${API_ROUTES.USER.GETUSER}/${id}`)
         const data = await response.json()
         setForm(data)
         const dp = await fetch(`${API_URL}/public/uploads/${formDetails.imagePath}`)
@@ -64,12 +66,12 @@ export default function Page() {
     if (profile) {
       formData.append('image', profile);
     }
-    const data = await fetch(`${API_URL}/userdetails`, {
+    const data = await fetch(`${API_URL}/${API_ROUTES.USER.ADDUSER}`, {
         method:'POST',
         body:formData
     })
     const response = await data.json()
-    router.push('/dashboard')
+    router.push(PAGE_ROUTE.DASHBOARD)
   }
   // const UpdateForm = async (e) =>{
   //   e.preventDefault();
@@ -99,7 +101,7 @@ export default function Page() {
         formData.append('image', profile);
     }
     try {
-        const response = await fetch(`${API_URL}/updateuser/${id}`, {
+        const response = await fetch(`${API_URL}/${API_ROUTES.USER.UPDATEUSER}/${id}`, {
             method: 'PUT',
             body: formData,
         });
@@ -110,7 +112,7 @@ export default function Page() {
         }
 
         const result = await response.json();
-        router.push('/dashboard');
+        router.push(PAGE_ROUTE.DASHBOARD);
     } catch (error) {
         console.error("Request failed:", error);
     }
