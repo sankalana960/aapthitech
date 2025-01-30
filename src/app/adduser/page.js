@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from "next/navigation";
 
 export default function Page() {
-
+  const API_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
   const [formDetails, setForm] = useState({firstName:"", lastName:"", email:"", gender:"Male", password:"", hobbies:"", role:"", number:""})
   const [formErrors, setFormErrors] = useState({});
   const [profile, setImage] = useState(null)
@@ -19,10 +19,10 @@ export default function Page() {
   useEffect(()=>{
     if (id){
       (async ()=>{
-        const response = await fetch(`http://localhost:8333/getusers/${id}`)
+        const response = await fetch(`${API_URL}/getusers/${id}`)
         const data = await response.json()
         setForm(data)
-        const dp = await fetch(`http://localhost:8333/uploads/${formDetails.imagePath}`)
+        const dp = await fetch(`${API_URL}/public/uploads/${formDetails.imagePath}`)
         setImage(data.imagePath)
         setUpdate(false)
       })()
@@ -64,7 +64,7 @@ export default function Page() {
     if (profile) {
       formData.append('image', profile);
     }
-    const data = await fetch("http://localhost:8333/userdetails", {
+    const data = await fetch(`${API_URL}/userdetails`, {
         method:'POST',
         body:formData
     })
@@ -74,7 +74,7 @@ export default function Page() {
   // const UpdateForm = async (e) =>{
   //   e.preventDefault();
   //   console.log(formDetails)
-  //   const data = await fetch(`http://localhost:8333/updateuser/${id}`, {
+  //   const data = await fetch(`${API_URL}/updateuser/${id}`, {
   //       method:'PUT',
   //       headers:{
   //         'Content-Type':"Application/json"
@@ -94,11 +94,12 @@ export default function Page() {
     for (const key in formDetails) {
         formData.append(key, formDetails[key]);
     }
+    console.log(formData)
     if (profile) {
         formData.append('image', profile);
     }
     try {
-        const response = await fetch(`http://localhost:8333/updateuser/${id}`, {
+        const response = await fetch(`${API_URL}/updateuser/${id}`, {
             method: 'PUT',
             body: formData,
         });
@@ -109,7 +110,6 @@ export default function Page() {
         }
 
         const result = await response.json();
-        console.log(result.message);
         router.push('/dashboard');
     } catch (error) {
         console.error("Request failed:", error);
@@ -149,7 +149,7 @@ const handleImageChange = (event) => {
       <form>
       <input onChange={handleImageChange} type="file" accept="image/*" />
       {preview&&<img src={preview} alt="NA" style={{ width: '80px', height: 'auto' }}/>}
-      {formDetails.imagePath&&!preview&&<img src={`http://localhost:8333/uploads/${formDetails.imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/>}
+      {formDetails.imagePath&&!preview&&<img src={`${API_URL}/public/uploads/${formDetails.imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/>}
         <div className="form-row">
           <div className="col-md-4 mb-3">
             <label htmlFor="firstName">First name</label>

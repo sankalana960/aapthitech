@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import bcrypt from 'bcryptjs';
 import { useRouter } from "next/navigation";
+import { API_ROUTES } from "@/constants/apiroutes";
+import { PAGE_ROUTE } from "@/constants/pagesroutes";
 
 export default function Page() {
   const router = useRouter();
@@ -40,8 +42,8 @@ export default function Page() {
     validateForm()
     const email = formDetails.email
     const password = formDetails.password
-    
-    const responce = await fetch("http://localhost:8333/loginuser", {
+    const API_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
+    const responce = await fetch(`${API_URL}/${API_ROUTES.AUTH.LOGIN}`, {
       method:"POST",
       headers:{
         "Content-Type":"application/json",
@@ -51,12 +53,12 @@ export default function Page() {
     const data = await responce.json()
     if (data.valid) {
       localStorage.setItem('userRole', data.user.role);
-      localStorage.setItem('firstName', data.user.first_name);
+      localStorage.setItem('firstName', data.user.firstName);
       localStorage.setItem('imagePath', data.user.imagePath);
       localStorage.setItem('id', data.user.id);
       document.cookie = `isLoggedIn=true; path=/; SameSite=Strict; Secure`;
       // document.cookie = `userRole=${data.role}; path=/; SameSite=Strict; Secure`;      
-      router.push("/dashboard");
+      router.push(PAGE_ROUTE.DASHBOARD);
       }else{
         alert("Enter Valid Credentials")
       }

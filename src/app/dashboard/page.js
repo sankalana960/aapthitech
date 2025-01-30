@@ -7,14 +7,14 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 export default function Page() {
     const router = useRouter()
-
+    const API_URL = `http://localhost:${process.env.NEXT_PUBLIC_BACKEND_PORT}`
     const [userDetails, setUserDetails] = useState([])
     const userRole = localStorage.getItem('userRole');
     const userFirst = localStorage.getItem('firstName');
     const userimage = localStorage.getItem('imagePath');
     const userID = localStorage.getItem('id');
     const fetchData = async () => {
-        const response = await fetch("http://localhost:8333/getusers")
+        const response = await fetch(`${API_URL}/getusers`)
         const data = await response.json()
         setUserDetails(data)
     }
@@ -33,7 +33,7 @@ export default function Page() {
             return;
         }
         const {id} = user;
-        const response = await fetch(`http://localhost:8333/deleteuser/${id}`, {
+        const response = await fetch(`${API_URL}/deleteuser/${id}`, {
             method: 'DELETE',
         });
         fetchData();
@@ -54,7 +54,7 @@ export default function Page() {
         </button>
         <div className="profile-container" style={{ display: 'flex', alignItems: 'center', marginLeft: '900px' }}>
             <img
-            src={`http://localhost:8333/uploads/${userimage}`}
+            src={`${API_URL}/public/uploads/${userimage}`}
             alt="User Profile"
             style={{
                 width: '40px',
@@ -86,12 +86,18 @@ export default function Page() {
                 <tbody>
                     {userDetails.map((each)=>{
                         let {id,first_name, last_name, email, phone_number,imagePath, role} = each
+                        if (!first_name){
+                            let {firstName, lastName, phoneNumber} = each
+                            first_name=firstName
+                            last_name=lastName
+                            phone_number=phoneNumber
+                        }
                         imagePath= imagePath.replace(/C:\\uploads\\/g,"")
                         if(userRole==="Admin" && id!=userID)
                         {
                             return(
                                 <tr key={id}>
-                                    <td><img src={`http://localhost:8333/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
+                                    <td><img src={`${API_URL}/public/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
                                     <td>{first_name}</td>
                                     <td>{last_name}</td>
                                     <td>{email}</td>
@@ -105,7 +111,7 @@ export default function Page() {
                             if(role==="User" && id!=userID){
                                 return(
                                     <tr key={id}>
-                                        <td><img src={`http://localhost:8333/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
+                                        <td><img src={`${API_URL}/uploads/${imagePath}`} alt="NA" style={{ width: '80px', height: 'auto' }}/></td>
                                         <td>{first_name}</td>
                                         <td>{last_name}</td>
                                         <td>{email}</td>
